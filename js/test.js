@@ -6,7 +6,6 @@ async function getProducts(url) {
   console.log(products);
 
   products.forEach(function (product) {
-    let i = 0;
     for (let i = 0; i < product.categories.length; i++) {
       if (product.categories[i].name === "New") {
         container.innerHTML += `<div class="product">
