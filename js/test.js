@@ -6,11 +6,13 @@ async function getProducts(url) {
   console.log(products);
 
   products.forEach(function (product) {
-    container.innerHTML += `<div class="product">
+    if (product.categories.name[1] === "New") {
+      container.innerHTML += `<div class="product">
         <h2>${product.name}</h2>
         <div class="prod-img"><img src="${product.images[0].src}"><div>
         <p>${product.price_html}</p>
       </div>`;
+    }
   });
 }
 
