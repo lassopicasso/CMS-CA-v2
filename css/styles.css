@@ -179,9 +179,11 @@ nav li {
 
 /* Product Overview */
 
-.product_overview {
+.new_products,
+.popular_products {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+
   max-width: 75vw;
   margin: auto;
   grid-gap: 10px;
@@ -228,8 +230,9 @@ nav li {
 .woman_imgTest {
   overflow: hidden;
 }
-.product_overview_contentTest img {
-  height: 100%;
+.product_overview_contentTest img,
+.prod-img {
+  height: 250px;
 }
 
 .product_overview_content h3,
@@ -609,7 +612,9 @@ activeImg {
 
 /* Notepad */
 @media only screen and (max-width: 900px) {
-  .product_overview {
+  .product_overview,
+  .new_products,
+  .popular_products {
     grid-template-columns: 1fr 1fr;
   }
   nav {
@@ -668,7 +673,9 @@ activeImg {
   .welcome_text {
     font-size: 2.3em;
   }
-  .product_overview {
+  .product_overview,
+  .new_products,
+  .popular_products {
     grid-template-columns: 1fr;
   }
   header {
