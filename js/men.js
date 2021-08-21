@@ -8,10 +8,8 @@ async function getProducts(url) {
   console.log(products);
   products.forEach(function (product) {
     for (let i = 0; i < product.categories.length; i++) {
-      if (document.URL.includes("/men")) {
-        console.log("True");
-        if (product.categories[i].slug === "new-men") {
-          new_products.innerHTML += `
+      if (product.categories[i].slug === "new-men") {
+        new_products.innerHTML += `
         <div class="product_overview_content product_overview_contentTest">
           <div class="woman_imgTest">
           <a href="product-specific.html?id=${product.id}" class="women_specific">
@@ -25,9 +23,9 @@ async function getProducts(url) {
              <p>${product.prices.price} kr</p>
           </div>
         </div>`;
-        }
-        if (product.categories[i].slug === "popular-men") {
-          popular_products.innerHTML += `
+      }
+      if (product.categories[i].slug === "popular-men") {
+        popular_products.innerHTML += `
           <div class="product_overview_content product_overview_contentTest">
             <div class="woman_imgTest">
             <a href="product-specific.html?id=${product.id}" class="women_specific">
@@ -41,7 +39,6 @@ async function getProducts(url) {
                <p>${product.prices.price} kr</p>
             </div>
           </div>`;
-        }
       }
     }
   });
