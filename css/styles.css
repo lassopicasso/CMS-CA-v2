@@ -94,6 +94,11 @@ button:hover:enabled {
   cursor: pointer;
 }
 
+.newProductsLink,
+.popularProductsLink {
+  cursor: pointer;
+}
+
 /* Header*/
 
 .header__content {
