@@ -34,146 +34,114 @@ thirdPrevBtn.addEventListener("click", function () {
 const cartItems = JSON.parse(localStorage.getItem("Cartlist"));
 const cartOverview = document.querySelector(".cartPage");
 const cartSum = document.querySelector(".sum");
+
 if (cartItems === null) {
   const button = document.querySelector(".nextBtn");
   cartOverview.innerHTML += `<p>No items in the cart</p>`;
   button.innerHTML = `<button disabled>Next</button>`;
 }
 
-const alphaProG3 = [];
-const alphaPrice = 999;
-let alphaTotalPrice = 0;
-const bergensProJ3 = [];
-const bergensPrice = 1256;
-let bergensTotalPrice = 0;
-if (cartItems !== null) {
-  for (let i = 0; i < cartItems.length; i++) {
-    if (cartItems[i] === "alphaProG3") {
-      alphaProG3.push(cartItems[i]);
-    } else {
-      bergensProJ3.push(cartItems[i]);
+//Array with unique items
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+let cartItemsUniqueArray = cartItems.filter(onlyUnique);
+
+// Gather info from API and place it in HTML
+
+async function getProducts(url) {
+  cartOverview.innerHTML = `
+  <div class="cart-headings">
+    <div></div>
+    <div>Product</div>
+    <div>Amount</div>
+    <div>Price</div>
+    </div>
+  `;
+  let cartItemsUniqueArray = cartItems.filter(onlyUnique);
+  const response = await fetch(url);
+  const products = await response.json();
+
+  let sum = 0;
+  products.forEach(function (product) {
+    for (let i = 0; i < cartItemsUniqueArray.length; i++) {
+      if (cartItemsUniqueArray[i] === product.id) {
+        let count = 0;
+
+        for (let n = 0; n < cartItems.length; n++) {
+          if (cartItems[n] === cartItemsUniqueArray[i]) {
+            count++;
+          }
+        }
+
+        cartOverview.innerHTML += `
+        <div class="cart-itemContent cart-itemContent-men">
+          <div class="imageCart" style ="background-image: url(${product.images[0].src})" ></div>
+          <div class="itemName">${product.name}</div>
+          <div class="amount">
+            <div class="minus minusMen ${product.id}"> - </div>
+            <div class="middle middleMen">${count}</div>
+            <div class="plus plusMen ${product.id}"> + </div>
+          </div>
+          <div class="totalPrice totalPriceMen">Kr ${product.prices.price * count}</div>
+        </div>`;
+        // sum price with amount
+        sum += product.prices.price * count;
+        cartSum.innerHTML = `
+          <div></div>
+          <div></div>
+          <div class="totalPrice">Sum</div>
+          <div class="totalPrice sumPrice">Kr ${sum}</div>
+        `;
+      }
     }
+  });
+}
+getProducts("https://rainydays.thefed.no/wp-json/wc/store/products/");
+
+// If adjusting amount
+cartOverview.addEventListener("click", amountReduction);
+
+function amountReduction(event) {
+  if (event.target.classList.contains("minus")) {
+    for (let i = 0; i < cartItems.length; i++) {
+      if (event.target.classList.contains(cartItems[i])) {
+        cartItems.splice(i, 1);
+
+        localStorage.setItem("Cartlist", JSON.stringify(cartItems));
+        break;
+      }
+    }
+
+    getProducts("https://rainydays.thefed.no/wp-json/wc/store/products/");
+  }
+  if (event.target.classList.contains("plus")) {
+    for (let i = 0; i < cartItems.length; i++) {
+      if (event.target.classList.contains(cartItems[i])) {
+        cartItems.push(cartItems[i]);
+
+        localStorage.setItem("Cartlist", JSON.stringify(cartItems));
+        break;
+      }
+    }
+    getProducts("https://rainydays.thefed.no/wp-json/wc/store/products/");
   }
 }
 
-if (alphaProG3.length > 0) {
-  alphaTotalPrice = alphaPrice * alphaProG3.length;
-  alphaTotalPriceComma = numberWithThousandSeparator(alphaPrice * alphaProG3.length);
-  cartOverview.innerHTML += `<div class="cart-itemContent cart-itemContent-men">
-                                  <div class=imageCart 
-                                  style ="background-image: url('../Images/man-yellow-rain-jacket.jpg')" ></div>
-                                  <div class="itemName">Alpha Pro G3</div>
-                                  <div class="amount">
-                                    <div class="minus minusMen"> - </div>
-                                    <div class="middle middleMen">${alphaProG3.length}</div>
-                                    <div class="plus plusMen"> + </div>
-                                  </div>
-                                  <div class="totalPrice totalPriceMen">Kr ${alphaTotalPriceComma}</div>
-                            
-                                  </div>`;
-}
-
-if (bergensProJ3.length > 0) {
-  bergensTotalPrice = bergensPrice * bergensProJ3.length;
-  bergensTotalPriceComma = numberWithThousandSeparator(bergensPrice * bergensProJ3.length);
-  cartOverview.innerHTML += `<div class="cart-itemContent cart-itemContent-women">
-                                <div class=imageCart 
-                                style ="background-image: url('../Images/female-hiker-yellow-jacket.jpg')" ></div>
-                                <div class="itemName">Bergens Pro J3</div>
-                                <div class="amount">
-                                  <div class="minus minusWomen"> - </div>
-                                  <div class="middle middleWomen">${bergensProJ3.length}</div>
-                                  <div class="plus plusWomen"> + </div>
-                                </div>
-                                <div class="totalPrice totalPriceWomen">Kr ${bergensTotalPriceComma}</div>
-                              </div>`;
-}
-
-const minusMen = document.querySelector(".minusMen");
-const plusMen = document.querySelector(".plusMen");
-const middleMen = document.querySelector(".middleMen");
-const totalPriceMen = document.querySelector(".totalPriceMen");
-const cartItemContentMen = document.querySelector(".cart-itemContent-men");
-
-const indexMen = cartItems.indexOf("alphaProG3");
-
-if (minusMen && plusMen) {
-  minusMen.addEventListener("click", function () {
-    if (middleMen.innerHTML === "1") {
-      cartItemContentMen.style.display = "none";
-    }
-    if (indexMen > -1) {
-      cartItems.splice(indexMen, 1);
-      localStorage.setItem("Cartlist", JSON.stringify(cartItems));
-      middleMen.innerHTML = Number(middleMen.innerHTML) - 1;
-      labelItemCounter.innerHTML = Number(labelItemCounter.innerHTML) - 1;
-      alphaTotalPrice -= alphaPrice;
-      totalPriceMen.innerHTML = `kr ${numberWithThousandSeparator(alphaTotalPrice)}`;
-      sumPrice.innerHTML = `Kr ${numberWithThousandSeparator(bergensTotalPrice + alphaTotalPrice)}`;
-    }
-  });
-  plusMen.addEventListener("click", function () {
-    cartItems.push("alphaProG3");
-    localStorage.setItem("Cartlist", JSON.stringify(cartItems));
-    middleMen.innerHTML = Number(middleMen.innerHTML) + 1;
-    labelItemCounter.innerHTML = Number(labelItemCounter.innerHTML) + 1;
-    alphaTotalPrice += alphaPrice;
-    totalPriceMen.innerHTML = `kr ${numberWithThousandSeparator(alphaTotalPrice)}`;
-    sumPrice.innerHTML = `Kr ${numberWithThousandSeparator(bergensTotalPrice + alphaTotalPrice)}`;
-  });
-}
-const minusWomen = document.querySelector(".minusWomen");
-const plusWomen = document.querySelector(".plusWomen");
-const middleWomen = document.querySelector(".middleWomen");
-const totalPriceWomen = document.querySelector(".totalPriceWomen");
-const cartItemContentWomen = document.querySelector(".cart-itemContent-women");
-
-const indexWomen = cartItems.indexOf("bergensProJ3");
-
-if (minusWomen && plusWomen) {
-  minusWomen.addEventListener("click", function () {
-    if (middleWomen.innerHTML === "1") {
-      cartItemContentWomen.style.display = "none";
-    }
-    if (indexWomen > -1) {
-      cartItems.splice(indexWomen, 1);
-      localStorage.setItem("Cartlist", JSON.stringify(cartItems));
-      middleWomen.innerHTML = Number(middleWomen.innerHTML) - 1;
-      labelItemCounter.innerHTML = Number(labelItemCounter.innerHTML) - 1;
-      bergensTotalPrice -= bergensPrice;
-      totalPriceWomen.innerHTML = `kr ${numberWithThousandSeparator(bergensTotalPrice)}`;
-      sumPrice.innerHTML = `Kr ${numberWithThousandSeparator(bergensTotalPrice + alphaTotalPrice)}`;
-    }
-  });
-  plusWomen.addEventListener("click", function () {
-    cartItems.push("bergensProJ3");
-    localStorage.setItem("Cartlist", JSON.stringify(cartItems));
-    middleWomen.innerHTML = Number(middleWomen.innerHTML) + 1;
-    labelItemCounter.innerHTML = Number(labelItemCounter.innerHTML) + 1;
-    bergensTotalPrice += bergensPrice;
-    totalPriceWomen.innerHTML = `kr ${numberWithThousandSeparator(bergensTotalPrice)}`;
-    sumPrice.innerHTML = `Kr ${numberWithThousandSeparator(bergensTotalPrice + alphaTotalPrice)}`;
-  });
-}
-
-function numberWithThousandSeparator(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
-let sum = alphaTotalPrice + bergensTotalPrice;
-let sumSeparator = numberWithThousandSeparator(sum);
-
-cartSum.innerHTML += `  
-                        <div></div>
-                        <div></div>
-                        <div class="totalPrice">Sum</div>
-                        <div class="totalPrice sumPrice">Kr ${sumSeparator}</div>
-                      `;
-
-const sumPrice = document.querySelector(".sumPrice");
-
 if (cartItems.length !== 0 || !cartItems === null) {
   firstNextBtn.disabled = false;
+}
+
+cartOverview.addEventListener("click", labelItemAdjust);
+
+function labelItemAdjust(event) {
+  if (event.target.classList.contains("minus")) {
+    labelItemCounter.innerHTML = cartItems.length;
+  }
+  if (event.target.classList.contains("plus")) {
+    labelItemCounter.innerHTML = cartItems.length;
+  }
 }
 
 //Shipping Details

@@ -10,15 +10,3 @@ if (typeof JSON.parse(localStorage.getItem("Cartlist")) === "undefined" || JSON.
     labelItemCounter.innerHTML = cartItems.length;
   }
 }
-
-if (typeof addToCartAlpha !== "undefined") {
-  addToCartAlpha.addEventListener("click", function () {
-    labelItemCounter.style.display = "inline";
-  });
-}
-
-if (typeof addToCartBergens !== "undefined") {
-  addToCartBergens.addEventListener("click", function () {
-    labelItemCounter.style.display = "inline";
-  });
-}
