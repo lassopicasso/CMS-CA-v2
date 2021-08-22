@@ -1,6 +1,6 @@
 const thumbnails = document.getElementsByClassName("thumbnail");
 const activeImage = document.getElementsByClassName("activeImg");
-console.log(activeImage);
+
 for (let i = 0; i < thumbnails.length; i++) {
   thumbnails[i].addEventListener("click", function () {
     if (activeImage.length > 0) {

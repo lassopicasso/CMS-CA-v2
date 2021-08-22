@@ -3,21 +3,27 @@ const productDetails = document.querySelector(".product-specific__details");
 const imageFeatured = document.querySelector(".image-featured");
 const productThumbnails = document.querySelector(".product-image_thumbnails");
 
+const womenNav = document.querySelector(".womenNav");
+const menNav = document.querySelector(".menNav");
+
 const queryString = document.location.search;
-console.log(queryString);
+
 const params = new URLSearchParams(queryString);
-console.log(params);
 
 const id = params.get("id");
-console.log(id);
 
 const url = "https://rainydays.thefed.no/wp-json/wc/store/products/" + id;
-console.log(url);
 
 async function fetchDetails() {
   const response = await fetch(url);
   const object = await response.json();
-  console.log(object);
+
+  if (object.categories[0].name === "Men") {
+    menNav.classList.add("active");
+  } else {
+    womenNav.classList.add("active");
+  }
+  imageFeatured.innerHTML = "";
   imageFeatured.innerHTML = `<img class="product-image"
                                   id="featured"
                                   src="${object.images[0].src}"
@@ -53,7 +59,7 @@ async function fetchDetails() {
 
   const thumbnails = document.getElementsByClassName("thumbnail");
   const activeImage = document.getElementsByClassName("activeImg");
-  console.log(activeImage);
+
   for (let i = 0; i < thumbnails.length; i++) {
     thumbnails[i].addEventListener("click", function () {
       if (activeImage.length > 0) {
